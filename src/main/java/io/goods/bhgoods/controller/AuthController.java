@@ -19,38 +19,32 @@ import io.goods.bhgoods.service.AuthService;
 import jakarta.validation.Valid;
 
 // REST Controller for authentication endpoints
-@RestController                    // Combines @Controller and @ResponseBody
-@RequestMapping("/api/auth")       // All endpoints in this controller start with /api/auth
+@RestController
+@RequestMapping("/api/auth")      
 public class AuthController {
 
     @Autowired
-    private AuthService authService;  // Inject authentication service
+    private AuthService authService;
 
-    // Login endpoint - POST /api/auth/login
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            // @Valid triggers validation annotations in LoginRequest
-            // @RequestBody converts JSON to LoginRequest object
             JwtAuthenticationResponse response = authService.login(loginRequest);
             return ResponseEntity.ok(response);  // HTTP 200 with token response
-        } catch (RuntimeException e) {
-            // If authentication fails, return HTTP 401 Unauthorized
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        } catch (RuntimeException e) {  
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED) //401 unauthorized
                     .body("Erro de autenticação: " + e.getMessage());
         }
     }
 
-    // Restaurant registration endpoint - POST /api/auth/register/restaurante  
     @PostMapping("/register/restaurante")
     public ResponseEntity<?> registerRestaurante(@Valid @RequestBody RegisterRestauranteRequest registerRequest) {
         try {
             // @Valid triggers validation annotations in RegisterRestauranteRequest
             JwtAuthenticationResponse response = authService.registerRestaurante(registerRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);  // HTTP 201 Created
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
-            // If registration fails (e.g., email already exists), return HTTP 400 Bad Request
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST) //400 bad request
                     .body("Erro no cadastro: " + e.getMessage());
         }
     }
