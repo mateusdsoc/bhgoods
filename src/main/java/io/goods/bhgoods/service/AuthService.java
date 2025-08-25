@@ -18,63 +18,56 @@ import io.goods.bhgoods.repository.UserRepository;
 public class AuthService {
 
     @Autowired
-    private UserRepository userRepository;    // To interact with database
+    private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;  // To hash and verify passwords
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtTokenProvider tokenProvider;   // To generate JWT tokens
+    private JwtTokenProvider tokenProvider;
 
     // Login method - authenticates user and returns JWT token
     public JwtAuthenticationResponse login(LoginRequest loginRequest) {
-        // Step 1: Find user by email using record accessor method
-        User user = userRepository.findByEmail(loginRequest.email())  // Record accessor: email()
+
+        User user = userRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Step 2: Verify password using record accessor method
-        // passwordEncoder.matches() compares plain text password with hashed password
-        if (!passwordEncoder.matches(loginRequest.senha(), user.getSenha())) {  // Record accessor: senha()
+        if (!passwordEncoder.matches(loginRequest.senha(), user.getSenha())) {
             throw new RuntimeException("Credenciais inválidas");
         }
 
-        // Step 3: Generate JWT token for authenticated user
         String token = tokenProvider.generateToken(user);
         
-        // Step 4: Return response with token and user info
+        //Return response with token and user info
         return new JwtAuthenticationResponse(token, user.getId(), user.getEmail(), user.getRole());
     }
 
     // Registration method for restaurants
     public JwtAuthenticationResponse registerRestaurante(RegisterRestauranteRequest registerRequest) {
-        // Step 1: Check if email is already in use
-        if (userRepository.existsByEmail(registerRequest.email())) {  // Using record accessor method
+
+        if (userRepository.existsByEmail(registerRequest.email())) {
             throw new RuntimeException("Email já está em uso");
         }
 
-        // Step 2: Create new Restaurante entity
         Restaurante restaurante = new Restaurante();
-        restaurante.setEmail(registerRequest.email());               // Record accessor: email()
+        restaurante.setEmail(registerRequest.email());
         
         // Hash the password before storing - NEVER store plain text passwords
-        restaurante.setSenha(passwordEncoder.encode(registerRequest.senha()));  // Record accessor: senha()
+        restaurante.setSenha(passwordEncoder.encode(registerRequest.senha()));
         
         // Set restaurant-specific fields using record accessor methods
-        restaurante.setNome(registerRequest.nome());                // Record accessor: nome()
-        restaurante.setDescricao(registerRequest.descricao());      // Record accessor: descricao()
-        restaurante.setEndereco(registerRequest.endereco());        // Record accessor: endereco()
-        restaurante.setTelefone(registerRequest.telefone());        // Record accessor: telefone()
-        
-        // New restaurants start as pending approval
+        restaurante.setNome(registerRequest.nome());
+        restaurante.setDescricao(registerRequest.descricao());
+        restaurante.setEndereco(registerRequest.endereco());
+        restaurante.setTelefone(registerRequest.telefone());
+
         restaurante.setStatusAprovacao(StatusAprovacao.PENDENTE);
 
-        // Step 3: Save to database - role will be automatically set to RESTAURANTE
         User savedUser = userRepository.save(restaurante);
         
-        // Step 4: Generate token for newly registered user
         String token = tokenProvider.generateToken(savedUser);
         
-        // Step 5: Return response with token and user info
+        //Return response with token and user info
         return new JwtAuthenticationResponse(token, savedUser.getId(), savedUser.getEmail(), savedUser.getRole());
     }
 
