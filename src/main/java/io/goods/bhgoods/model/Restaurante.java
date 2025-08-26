@@ -2,6 +2,14 @@ package io.goods.bhgoods.model;
 
 import java.util.List;
 
+import java.util.Set;
+import io.goods.bhgoods.enums.CategoriaRestaurante;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+
 import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.enums.UserRole;
 import jakarta.persistence.Column;
@@ -36,6 +44,11 @@ public class Restaurante extends User {
     @OneToMany(mappedBy = "restaurante")
     private List<FotoRestaurante> fotos;
 
+    @ElementCollection(targetClass = CategoriaRestaurante.class)
+    @CollectionTable(name = "restaurante_categorias", joinColumns = @JoinColumn(name = "restaurante_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<CategoriaRestaurante> categorias;
+
     public Restaurante() {}
     
 
@@ -45,6 +58,7 @@ public class Restaurante extends User {
         this.endereco = endereco;
         this.telefone = telefone;
         this.statusAprovacao = StatusAprovacao.PENDENTE;
+    // categorias deve ser inicializado externamente
     }
     
     // @PrePersist ensures role is always RESTAURANTE before saving to database
@@ -107,6 +121,14 @@ public class Restaurante extends User {
     
     public void setFotos(List<FotoRestaurante> fotos) { 
         this.fotos = fotos; 
+    }
+
+    public Set<CategoriaRestaurante> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(Set<CategoriaRestaurante> categorias) {
+        this.categorias = categorias;
     }
 
 }

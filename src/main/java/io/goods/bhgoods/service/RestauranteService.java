@@ -19,31 +19,17 @@ public class RestauranteService {
     public List<Restaurante> getAllRestaurantes(){
         return repository.findAll();
     }
-
     public List<Restaurante> getRestaurantesByStatus(StatusAprovacao status){
         return repository.findByStatusAprovacao(status);
-    }
-
-    public List<Restaurante> getRestaurantesByNomeAndStatus(String nome, StatusAprovacao status){
-        return repository.findByNomeAndStatusAprovacao(nome, status);
-    }
-
-    public List<Restaurante> getRestaurantesByEnderecoAndStatus(String endereco, StatusAprovacao status){
-        return repository.findByNomeAndStatusAprovacao(endereco, status);
     }
 
     public List<Restaurante> getRestaurantesByNomeContainingAndStatus(String nome, StatusAprovacao status){
         return repository.findByNomeContainingAndStatusAprovacao(nome, status);
     }
-
-    public List<Restaurante> getRestaurantesByEnderecoContainingAndStatus(String endereco, StatusAprovacao status){
-        return repository.findByEnderecoContainingAndStatusAprovacao(endereco, status);
-    }
-
+  
     public Restaurante getRestauranteById(Long id){
         return repository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException());
     }
-
     public Restaurante getRestauranteByEmail(String email){
         return repository.findByEmail(email).orElseThrow(() -> new RestauranteNaoEncontradoException());
     }
