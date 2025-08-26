@@ -4,14 +4,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.goods.bhgoods.model.Restaurante;
 import java.util.List;
+import java.util.Optional;
 import io.goods.bhgoods.enums.StatusAprovacao;
 
 
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>{
-    List<Restaurante> findByEndereco(String endereco);
 
-    List<Restaurante> findByNome(String nome);
+    Optional <Restaurante> findByEmail(String email);
+
+    Optional<Restaurante> findById(Long id);
 
     List<Restaurante> findByStatusAprovacao(StatusAprovacao statusAprovacao);
     
