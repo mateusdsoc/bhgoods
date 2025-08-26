@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.goods.bhgoods.dto.JwtAuthenticationResponse;
 import io.goods.bhgoods.dto.LoginRequest;
-import io.goods.bhgoods.dto.RegisterRestauranteRequest;
+import io.goods.bhgoods.dto.Restaurante.RegisterRestauranteRequest;
 import io.goods.bhgoods.model.User;
 import io.goods.bhgoods.service.AuthService;
 import jakarta.validation.Valid;
