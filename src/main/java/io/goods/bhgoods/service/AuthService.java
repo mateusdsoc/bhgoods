@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import io.goods.bhgoods.config.JwtTokenProvider;
 import io.goods.bhgoods.dto.JwtAuthenticationResponse;
 import io.goods.bhgoods.dto.LoginRequest;
-import io.goods.bhgoods.dto.RegisterRestauranteRequest;
+import io.goods.bhgoods.dto.Restaurante.RegisterRestauranteRequest;
 import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.model.Restaurante;
 import io.goods.bhgoods.model.User;
