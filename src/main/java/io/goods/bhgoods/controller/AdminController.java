@@ -2,7 +2,6 @@ package io.goods.bhgoods.controller;
 
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -51,7 +50,7 @@ public class AdminController {
         return ResponseEntity.ok(
             restauranteService.getAllRestaurantes());
     } 
-    
+
    
     
 }
