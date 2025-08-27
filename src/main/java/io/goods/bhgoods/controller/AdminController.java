@@ -37,15 +37,15 @@ public class AdminController {
     ){
         if(status.equals(StatusAprovacao.APROVADO)){
             return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatus(StatusAprovacao.APROVADO));
+                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.APROVADO));
         }
         else if(status.equals(StatusAprovacao.PENDENTE)){
             return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatus(StatusAprovacao.PENDENTE));
+                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.PENDENTE));
         }
         else if(status.equals(StatusAprovacao.REJEITADO)){
             return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatus(StatusAprovacao.REJEITADO));
+                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.REJEITADO));
         }
         return ResponseEntity.ok(
             restauranteService.getAllRestaurantes());
