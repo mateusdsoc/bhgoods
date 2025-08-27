@@ -19,7 +19,7 @@ public class RestauranteService {
     RestauranteRepository repository;
 
     // Método privado para aplicar filtros de categoria
-    private Specification<Restaurante> aplicarFiltroCategorias(Specification<Restaurante> spec, List<String> categorias) {
+    static Specification<Restaurante> aplicarFiltroCategorias(Specification<Restaurante> spec, List<String> categorias) {
         if (categorias != null && !categorias.isEmpty()) {
             List<CategoriaRestaurante> categoriasEnum = CategoriaRestaurante.fromStringList(categorias);
             if (categoriasEnum != null) {
@@ -64,6 +64,12 @@ public class RestauranteService {
             .stream()
             .map(RestauranteToResponse::restauranteToResponse)
             .toList();
+    }
+
+    public Restaurante atualizarStatusRestaurante(Long id, StatusAprovacao status){
+        Restaurante restaurante  = getRestauranteById(id);
+        restaurante.setStatusAprovacao(status);
+        return restaurante;
     }
 
     public Restaurante getRestauranteById(Long id){
