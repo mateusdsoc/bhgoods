@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.goods.bhgoods.enums.CategoriaRestaurante;
 import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.model.Restaurante;
 import io.goods.bhgoods.model.User;
@@ -33,22 +34,11 @@ public class AdminController {
     @GetMapping("/restaurantes")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Restaurante>> getRestaurantesAprovados(
-        @RequestParam(value = "status", required = false) StatusAprovacao status
+        @RequestParam(value = "status", required = false) StatusAprovacao status,
+        @RequestParam(value = "nome", required = false) String nome,
+        @RequestParam(value = "categorias", required = false) List<CategoriaRestaurante> categorias
     ){
-        if(status.equals(StatusAprovacao.APROVADO)){
-            return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.APROVADO));
-        }
-        else if(status.equals(StatusAprovacao.PENDENTE)){
-            return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.PENDENTE));
-        }
-        else if(status.equals(StatusAprovacao.REJEITADO)){
-            return ResponseEntity.ok(
-                restauranteService.getRestaurantesByStatusAdmin(StatusAprovacao.REJEITADO));
-        }
-        return ResponseEntity.ok(
-            restauranteService.getAllRestaurantes());
+        return ResponseEntity.ok(restauranteService.buscarRestaurantesAdmin(nome, categorias, status));
     } 
 
    
