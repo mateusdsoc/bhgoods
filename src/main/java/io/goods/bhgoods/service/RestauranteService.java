@@ -1,16 +1,16 @@
 package io.goods.bhgoods.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import io.goods.bhgoods.dto.Restaurante.ResponseRestaurante;
 import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.exceptions.RestauranteNaoEncontradoException;
 import io.goods.bhgoods.model.Restaurante;
 import io.goods.bhgoods.repository.RestauranteRepository;
 import io.goods.bhgoods.util.RestauranteToResponse;
+import org.springframework.data.jpa.domain.Specification;
+import io.goods.bhgoods.enums.CategoriaRestaurante;
 
 @Service
 public class RestauranteService {
@@ -18,39 +18,54 @@ public class RestauranteService {
     @Autowired
     RestauranteRepository repository;
 
-    //admin methods
-    public List<Restaurante> getAllRestaurantes(){
-        return repository.findAll();
-    }
-    public List<Restaurante> getRestaurantesByStatusAdmin(StatusAprovacao status){
-        return repository.findByStatusAprovacao(status);
+    //admin - pode filtrar por qualquer status ou nenhum
+    public List<Restaurante> buscarRestaurantesAdmin(String nome, List<CategoriaRestaurante> categorias, StatusAprovacao status) {
+        Specification<Restaurante> spec = (root, query, cb) -> cb.conjunction(); // Inicia sem filtros
+
+        if (status != null) {
+            spec = spec.and((root, query, cb) ->
+                cb.equal(root.get("statusAprovacao"), status)
+            );
+        }
+        if (nome != null && !nome.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%")
+            );
+        }
+        if (categorias != null && !categorias.isEmpty()) {
+            spec = spec.and((root, query, cb) -> root.join("categorias").in(categorias));
+        }
+
+        return repository.findAll(spec);
     }
 
-    public List<Restaurante> getRestaurantesByNomeContainingAndStatusAdmin(String nome, StatusAprovacao status){
-        return repository.findByNomeContainingAndStatusAprovacao(nome, status);
+    //sempre filtra por APROVADO
+    public List<ResponseRestaurante> buscarRestaurantesPublicos(String nome, List<CategoriaRestaurante> categorias) {
+        Specification<Restaurante> spec = (root, query, cb) ->
+            cb.equal(root.get("statusAprovacao"), StatusAprovacao.APROVADO);
+
+        if (nome != null && !nome.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%")
+            );
+        }
+        if (categorias != null && !categorias.isEmpty()) {
+            spec = spec.and((root, query, cb) -> root.join("categorias").in(categorias));
+        }
+
+        return repository.findAll(spec)
+            .stream()
+            .map(RestauranteToResponse::restauranteToResponse)
+            .toList();
     }
-  
+
     public Restaurante getRestauranteById(Long id){
         return repository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException());
     }
+
     public Restaurante getRestauranteByEmail(String email){
         return repository.findByEmail(email).orElseThrow(() -> new RestauranteNaoEncontradoException());
     }
 
-    //normal-user methods
-    public List<ResponseRestaurante> getRestaurantesByStatus(StatusAprovacao status){
-        return repository.findByStatusAprovacao(status)
-                         .stream()
-                         .map(RestauranteToResponse::restauranteToResponse)
-                         .toList();
-
-    }
-
-    public List<ResponseRestaurante> getRestaurantesByNomeContainingAndStatus(String nome, StatusAprovacao status){
-        return repository.findByNomeContainingAndStatusAprovacao(nome, status)
-                         .stream()
-                         .map(RestauranteToResponse:: restauranteToResponse)
-                         .toList();
-    }
     
 }
