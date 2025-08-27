@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,10 +22,6 @@ public class ItemCardapio {
 
     @Column(length = 300)
     private String descricao;
-
-    @ManyToOne
-    @JoinColumn(name = "cardapio_id")
-    private Cardapio cardapio;
 
     public Long getId() {
         return id;
@@ -57,11 +51,4 @@ public class ItemCardapio {
         this.descricao = descricao;
     }
 
-    public Cardapio getCardapio() {
-        return cardapio;
-    }
-
-    public void setCardapio(Cardapio cardapio) {
-        this.cardapio = cardapio;
-    }
 }
