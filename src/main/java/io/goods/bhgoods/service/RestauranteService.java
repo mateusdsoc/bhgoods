@@ -18,8 +18,19 @@ public class RestauranteService {
     @Autowired
     RestauranteRepository repository;
 
+    // Método privado para aplicar filtros de categoria
+    private Specification<Restaurante> aplicarFiltroCategorias(Specification<Restaurante> spec, List<String> categorias) {
+        if (categorias != null && !categorias.isEmpty()) {
+            List<CategoriaRestaurante> categoriasEnum = CategoriaRestaurante.fromStringList(categorias);
+            if (categoriasEnum != null) {
+                spec = spec.and((root, query, cb) -> root.join("categorias").in(categoriasEnum));
+            }
+        }
+        return spec;
+    }
+
     //admin - pode filtrar por qualquer status ou nenhum
-    public List<Restaurante> buscarRestaurantesAdmin(String nome, List<CategoriaRestaurante> categorias, StatusAprovacao status) {
+    public List<Restaurante> buscarRestaurantesAdmin(String nome, List<String> categorias, StatusAprovacao status) {
         Specification<Restaurante> spec = (root, query, cb) -> cb.conjunction(); // Inicia sem filtros
 
         if (status != null) {
@@ -32,15 +43,13 @@ public class RestauranteService {
                 cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%")
             );
         }
-        if (categorias != null && !categorias.isEmpty()) {
-            spec = spec.and((root, query, cb) -> root.join("categorias").in(categorias));
-        }
+        spec = aplicarFiltroCategorias(spec, categorias);
 
         return repository.findAll(spec);
     }
 
     //sempre filtra por APROVADO
-    public List<ResponseRestaurante> buscarRestaurantesPublicos(String nome, List<CategoriaRestaurante> categorias) {
+    public List<ResponseRestaurante> buscarRestaurantesPublicos(String nome, List<String> categorias) {
         Specification<Restaurante> spec = (root, query, cb) ->
             cb.equal(root.get("statusAprovacao"), StatusAprovacao.APROVADO);
 
@@ -49,9 +58,7 @@ public class RestauranteService {
                 cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%")
             );
         }
-        if (categorias != null && !categorias.isEmpty()) {
-            spec = spec.and((root, query, cb) -> root.join("categorias").in(categorias));
-        }
+        spec = aplicarFiltroCategorias(spec, categorias);
 
         return repository.findAll(spec)
             .stream()

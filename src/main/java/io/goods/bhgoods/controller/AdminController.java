@@ -15,6 +15,9 @@ import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.model.Restaurante;
 import io.goods.bhgoods.model.User;
 import io.goods.bhgoods.service.RestauranteService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -36,10 +39,13 @@ public class AdminController {
     public ResponseEntity<List<Restaurante>> getRestaurantesAprovados(
         @RequestParam(value = "status", required = false) StatusAprovacao status,
         @RequestParam(value = "nome", required = false) String nome,
-        @RequestParam(value = "categorias", required = false) List<CategoriaRestaurante> categorias
+        @RequestParam(value = "categorias", required = false) List<String> categorias
     ){
         return ResponseEntity.ok(restauranteService.buscarRestaurantesAdmin(nome, categorias, status));
-    } 
+    }
+
+
+    
 
    
     
