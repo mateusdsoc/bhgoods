@@ -20,12 +20,5 @@ public class RestauranteController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok("Restaurante Dashboard - Bem-vindo, " + user.getEmail());
     }
-
-    // Manage restaurant menu - Restaurant owner only
-    @GetMapping("/cardapio")
-    @PreAuthorize("hasRole('RESTAURANTE')")  // Only restaurant owners can manage their menu
-    public ResponseEntity<String> getCardapio() {
-        // In a real application, this would return the restaurant's actual menu
-        return ResponseEntity.ok("Cardápio do restaurante (Restaurant owner only)");
-    }
+    
 }
