@@ -20,5 +20,4 @@ public class RestauranteController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok("Restaurante Dashboard - Bem-vindo, " + user.getEmail());
     }
-    
 }
