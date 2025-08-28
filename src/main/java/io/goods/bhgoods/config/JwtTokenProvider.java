@@ -3,7 +3,6 @@ package io.goods.bhgoods.config;
 import java.security.Key;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.goods.bhgoods.model.User;
@@ -17,27 +16,23 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    // Secret key for signing JWT tokens - injected from application.properties
-    // Default value provided if not configured in properties file
-    @Value("${app.jwtSecret:mySecretKey}")
-    private String jwtSecret;
+    private final JwtProperties jwtProperties;
 
-    // Token expiration time in milliseconds - injected from application.properties
-    // Default: 86400000ms = 24 hours
-    @Value("${app.jwtExpirationInMs:86400000}")
-    private long jwtExpirationInMs;
+    public JwtTokenProvider(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
     // Creates signing key from the secret string
     // Base64 decodes the secret and creates HMAC SHA key
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretBase64());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Generates JWT token for a given user
     public String generateToken(User user) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+    Date expiryDate = new Date(now.getTime() + jwtProperties.getExpirationMs());
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
