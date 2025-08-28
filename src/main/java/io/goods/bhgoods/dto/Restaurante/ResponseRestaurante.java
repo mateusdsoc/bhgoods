@@ -2,13 +2,13 @@ package io.goods.bhgoods.dto.Restaurante;
 
 import java.util.List;
 
-import io.goods.bhgoods.model.Cardapio;
+import io.goods.bhgoods.dto.Cardapio.CardapioResponse;
 
 public record ResponseRestaurante(
     String nome,
     String descricao,
     String endereco,
     String telefone,
-    Cardapio cardapio,
+    CardapioResponse cardapio,
     List<String> fotos
 ) {}
