@@ -3,9 +3,11 @@ package io.goods.bhgoods.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.goods.bhgoods.enums.StatusAprovacao;
 import io.goods.bhgoods.model.Restaurante;
 import io.goods.bhgoods.model.User;
+import io.goods.bhgoods.service.AuthService;
 import io.goods.bhgoods.service.RestauranteService;
 
 
@@ -24,7 +27,8 @@ import io.goods.bhgoods.service.RestauranteService;
 public class AdminController {
 
     @Autowired
-    RestauranteService restauranteService;
+    private RestauranteService restauranteService;
+    private AuthService authService;
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
@@ -50,6 +54,12 @@ public class AdminController {
         @PathVariable StatusAprovacao status
     ){
         return ResponseEntity.ok(restauranteService.atualizarStatusRestaurante(id, status));
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<HttpStatusCode> deletarUser(@PathVariable Long id){
+        authService.deleteById(id);
+        return ResponseEntity.status(204).build();
     }
 
     
