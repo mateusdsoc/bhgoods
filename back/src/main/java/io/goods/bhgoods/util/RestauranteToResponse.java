@@ -13,9 +13,10 @@ import io.goods.bhgoods.model.Restaurante;
 public class RestauranteToResponse {
     
     public static List<String> conversor(List<FotoRestaurante> fotos) {
+        if (fotos == null) return List.of();
         return fotos.stream()
-                    .map(FotoRestaurante::getUrl)
-                    .toList();
+            .map(FotoRestaurante::getUrl)
+            .toList();
     }
 
     public static ResponseRestaurante restauranteToResponse(Restaurante restaurante){
@@ -29,12 +30,15 @@ public class RestauranteToResponse {
             cardapioDto = new CardapioResponse(cardapio.getId(), itens);
         }
         return new ResponseRestaurante(
+            restaurante.getId(),
             restaurante.getNome(),
             restaurante.getDescricao(),
             restaurante.getEndereco(),
             restaurante.getTelefone(),
             cardapioDto,
-            conversor(restaurante.getFotos())
+            conversor(restaurante.getFotos()),
+            restaurante.getCategorias(),
+            restaurante.getStatusAprovacao()
         );
     }
 
